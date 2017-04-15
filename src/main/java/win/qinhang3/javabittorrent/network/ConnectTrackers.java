@@ -54,10 +54,7 @@ public class ConnectTrackers {
             throw new RuntimeException(e);
         }
 
-        Entity info = metadata.getMapEntity().asMap().get("info");
-        byte[] infoBytes = Arrays.copyOfRange(metadata.getData(), info.getStart(), info.getEnd());
-        byte[] sha1Bytes = DigestUtils.sha1(infoBytes);
-        String url = uri.toString()+"&info_hash=" + new String(new URLCodec().encode(sha1Bytes));
+        String url = uri.toString()+"&info_hash=" + new String(new URLCodec().encode(metadata.getInfoHash()));
 
         logger.info("query announce url : {}", url);
         HttpGet httpGet = new HttpGet(url);

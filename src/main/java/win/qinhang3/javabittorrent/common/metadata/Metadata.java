@@ -1,9 +1,12 @@
 package win.qinhang3.javabittorrent.common.metadata;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import win.qinhang3.javabittorrent.common.metadata.entity.Entity;
 import win.qinhang3.javabittorrent.util.BDecoding;
 import win.qinhang3.javabittorrent.common.metadata.entity.MapEntity;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -27,6 +30,12 @@ public class Metadata {
         data = baos.toByteArray();
         mapEntity = (MapEntity) BDecoding.decoding(data, new AtomicInteger(0));
         peerId = UUID.randomUUID().toString().substring(0,20).getBytes();
+    }
+
+    public byte[] getInfoHash(){
+        Entity info = getMapEntity().asMap().get("info");
+        byte[] infoBytes = Arrays.copyOfRange(getData(), info.getStart(), info.getEnd());
+        return DigestUtils.sha1(infoBytes);
     }
 
     public byte[] getData() {

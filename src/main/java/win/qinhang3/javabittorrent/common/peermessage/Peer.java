@@ -1,5 +1,8 @@
 package win.qinhang3.javabittorrent.common.peermessage;
 
+import win.qinhang3.javabittorrent.common.metadata.Metadata;
+
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +12,11 @@ import java.util.List;
 public class Peer {
     private String ip;
     private Integer port;
+    private Socket socket;
+    private Metadata metadata;
+
+    private byte[] remotePeerId;
+    private byte[] remoteExtendProtocol;
 
     public Peer(String ip, Integer port) {
         this.ip = ip;
@@ -32,7 +40,6 @@ public class Peer {
         this.port = port;
     }
 
-
     public static List<Peer> buildPeers(byte[] bytes) {
         List<Peer> peers = new ArrayList<>();
         for (int i = 0 ;i < bytes.length ; i+=6){
@@ -51,5 +58,37 @@ public class Peer {
     @Override
     public String toString() {
         return String.format("Peer[%s:%d]", ip, port);
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+
+    public Metadata getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    public byte[] getRemotePeerId() {
+        return remotePeerId;
+    }
+
+    public void setRemotePeerId(byte[] remotePeerId) {
+        this.remotePeerId = remotePeerId;
+    }
+
+    public byte[] getRemoteExtendProtocol() {
+        return remoteExtendProtocol;
+    }
+
+    public void setRemoteExtendProtocol(byte[] remoteExtendProtocol) {
+        this.remoteExtendProtocol = remoteExtendProtocol;
     }
 }
