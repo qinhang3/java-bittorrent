@@ -6,19 +6,19 @@ import java.util.Arrays;
  * Created by hang on 17/4/7.
  */
 public class ByteArrayEntity extends Entity {
-    byte[] str;
+    byte[] bytes;
 
-    public ByteArrayEntity(byte[] str) {
-        this.str = str;
+    public ByteArrayEntity(byte[] bytes) {
+        this.bytes = bytes;
     }
 
     @Override
     public String toString() {
-        return Arrays.toString(str);
+        return Arrays.toString(bytes);
     }
 
     public String asString(){
-        return new String(str);
+        return new String(bytes);
     }
 
     @Override
@@ -28,12 +28,16 @@ public class ByteArrayEntity extends Entity {
 
         ByteArrayEntity that = (ByteArrayEntity) o;
 
-        return Arrays.equals(str, that.str);
+        return Arrays.equals(bytes, that.bytes);
 
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(str);
+        return Arrays.hashCode(bytes);
+    }
+
+    public byte[] getBytes() {
+        return bytes;
     }
 }

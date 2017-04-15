@@ -4,6 +4,7 @@ import win.qinhang3.javabittorrent.util.BDecoding;
 import win.qinhang3.javabittorrent.common.metadata.entity.MapEntity;
 
 import java.io.*;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -13,6 +14,7 @@ public class Metadata {
     private byte[] data;
     private MapEntity mapEntity;
     private File file;
+    private byte[] peerId;
 
     public Metadata(File file) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -24,6 +26,7 @@ public class Metadata {
         }
         data = baos.toByteArray();
         mapEntity = (MapEntity) BDecoding.decoding(data, new AtomicInteger(0));
+        peerId = UUID.randomUUID().toString().substring(0,20).getBytes();
     }
 
     public byte[] getData() {
@@ -48,5 +51,13 @@ public class Metadata {
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    public byte[] getPeerId() {
+        return peerId;
+    }
+
+    public void setPeerId(byte[] peerId) {
+        this.peerId = peerId;
     }
 }
