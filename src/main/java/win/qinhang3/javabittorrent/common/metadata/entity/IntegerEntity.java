@@ -30,4 +30,8 @@ public class IntegerEntity extends Entity {
     public int hashCode() {
         return value;
     }
+
+    public int asInt(){
+        return value;
+    }
 }

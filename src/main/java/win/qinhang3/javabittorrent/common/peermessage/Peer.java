@@ -3,6 +3,8 @@ package win.qinhang3.javabittorrent.common.peermessage;
 import win.qinhang3.javabittorrent.common.metadata.Metadata;
 
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,14 +15,23 @@ public class Peer {
     private String ip;
     private Integer port;
     private Socket socket;
+    private SocketChannel socketChannel;
     private Metadata metadata;
 
     private byte[] remotePeerId;
     private byte[] remoteExtendProtocol;
 
-    public Peer(String ip, Integer port) {
+    private Integer handShakeStatus = 0; // 1-send 2-receive 3-both
+
+    private ByteBuffer output;
+    private ByteBuffer input;
+
+    private Integer nextMessageLength = null;
+
+    public Peer(String ip, Integer port, Metadata metadata) {
         this.ip = ip;
         this.port = port;
+        setMetadata(metadata);
     }
 
     public String getIp() {
@@ -50,7 +61,7 @@ public class Peer {
                     bytes[i + 3] & 0xFF
                     );
             int port = ((bytes[i + 4] & 0xFF) << 8) | (bytes[i + 5] & 0xFF);
-            peers.add(new Peer(ip, port));
+            peers.add(new Peer(ip, port, null));
         }
         return peers;
     }
@@ -74,6 +85,10 @@ public class Peer {
 
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
+        if (metadata != null){
+            output = ByteBuffer.allocate(metadata.getPieceLength() + 10);
+            input = ByteBuffer.allocate(metadata.getPieceLength() + 10);
+        }
     }
 
     public byte[] getRemotePeerId() {
@@ -90,5 +105,59 @@ public class Peer {
 
     public void setRemoteExtendProtocol(byte[] remoteExtendProtocol) {
         this.remoteExtendProtocol = remoteExtendProtocol;
+    }
+
+    public SocketChannel getSocketChannel() {
+        return socketChannel;
+    }
+
+    public void setSocketChannel(SocketChannel socketChannel) {
+        this.socketChannel = socketChannel;
+    }
+
+    public Integer getHandShakeStatus() {
+        return handShakeStatus;
+    }
+
+    public void setHandShakeStatus(Integer handShakeStatus) {
+        this.handShakeStatus = handShakeStatus;
+    }
+
+    public ByteBuffer getOutput() {
+        return output;
+    }
+
+    public void setOutput(ByteBuffer output) {
+        this.output = output;
+    }
+
+    public ByteBuffer getInput() {
+        return input;
+    }
+
+    public void setInput(ByteBuffer input) {
+        this.input = input;
+    }
+
+    public ByteBuffer getOutput(Integer handShakeLength) {
+        if (output.capacity() < handShakeLength){
+            output = ByteBuffer.allocate(handShakeLength);
+        }
+        return output;
+    }
+
+    public ByteBuffer getInput(Integer handShakeLength) {
+        if (input.capacity() < handShakeLength){
+            input = ByteBuffer.allocate(handShakeLength);
+        }
+        return input;
+    }
+
+    public Integer getNextMessageLength() {
+        return nextMessageLength;
+    }
+
+    public void setNextMessageLength(Integer nextMessageLength) {
+        this.nextMessageLength = nextMessageLength;
     }
 }

@@ -5,6 +5,9 @@ import win.qinhang3.javabittorrent.common.metadata.Metadata;
 import win.qinhang3.javabittorrent.common.peermessage.Peer;
 import win.qinhang3.javabittorrent.network.ConnectTrackers;
 import win.qinhang3.javabittorrent.network.Handshake;
+import win.qinhang3.javabittorrent.network.LocalHandshake;
+import win.qinhang3.javabittorrent.network.NioPeerOpt;
+import win.qinhang3.javabittorrent.util.MetadataFactory;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -18,21 +21,44 @@ public class NetworkTest extends ApplicationTest {
     private ConnectTrackers connectTrackers;
     @Resource
     private Handshake handshake;
+    @Resource
+    private LocalHandshake localHandshake;
+    @Resource
+    private NioPeerOpt nioPeerOpt;
 
     @Test
     public void testConnetTrackers() throws IOException {
-        File file = new File("/Users/hang/Downloads/熊目燒飯@広瀬うみ S-Cute #431 (自購足本無水印).torrent");
-        Metadata metadata = new Metadata(file);
+        File file = new File("/Users/hang/Downloads/test001.torrent");
+        Metadata metadata = MetadataFactory.getInstance(file);
         connectTrackers.execute(metadata);
     }
 
     @Test
     public void testHandShake() throws IOException {
-        File file = new File("/Users/hang/Downloads/熊目燒飯@広瀬うみ S-Cute #431 (自購足本無水印).torrent");
-        Metadata metadata = new Metadata(file);
-        Peer peer = new Peer("192.168.1.184", 13096);
+        File file = new File("/Users/hang/Downloads/test001.torrent");
+        Metadata metadata = MetadataFactory.getInstance(file);
+        Peer peer = new Peer("192.168.1.184", 13096, metadata);
         peer.setMetadata(metadata);
         handshake.execute(peer);
+    }
+
+    @Test
+    public void nioTest() throws IOException {
+        File file = new File("/Users/hang/Downloads/test001.torrent");
+        Metadata metadata = MetadataFactory.getInstance(file);
+        Peer peer = new Peer("192.168.1.184", 13096, metadata);
+        peer.setMetadata(metadata);
+
+        localHandshake.execute(peer);
+    }
+
+    @Test
+    public void nioSelectorTest() throws IOException, InterruptedException {
+        File file = new File("/Users/hang/Downloads/test001.torrent");
+        Metadata metadata = MetadataFactory.getInstance(file);
+        Peer peer = new Peer("192.168.1.184", 13096, metadata);
+        peer.setMetadata(metadata);
+        nioPeerOpt.execute(peer);
     }
 
 }

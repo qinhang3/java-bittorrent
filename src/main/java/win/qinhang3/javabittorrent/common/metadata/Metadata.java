@@ -1,7 +1,9 @@
 package win.qinhang3.javabittorrent.common.metadata;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import win.qinhang3.javabittorrent.common.metadata.entity.Entity;
+import win.qinhang3.javabittorrent.common.metadata.entity.IntegerEntity;
 import win.qinhang3.javabittorrent.util.BDecoding;
 import win.qinhang3.javabittorrent.common.metadata.entity.MapEntity;
 
@@ -19,23 +21,20 @@ public class Metadata {
     private File file;
     private byte[] peerId;
 
-    public Metadata(File file) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        FileInputStream fileInputStream = new FileInputStream(file);
-        byte[] temp = new byte[1024];
-        int len;
-        while((len = fileInputStream.read(temp)) != -1){
-            baos.write(temp, 0,len);
-        }
-        data = baos.toByteArray();
-        mapEntity = (MapEntity) BDecoding.decoding(data, new AtomicInteger(0));
-        peerId = UUID.randomUUID().toString().substring(0,20).getBytes();
-    }
-
     public byte[] getInfoHash(){
         Entity info = getMapEntity().asMap().get("info");
         byte[] infoBytes = Arrays.copyOfRange(getData(), info.getStart(), info.getEnd());
         return DigestUtils.sha1(infoBytes);
+    }
+
+    public String getInfoHashHex(){
+        return Hex.encodeHexString(getInfoHash());
+    }
+
+    public int getPieceLength(){
+        MapEntity info = (MapEntity)getMapEntity().asMap().get("info");
+        IntegerEntity pieceLength = (IntegerEntity)info.asMap().get("piece length");
+        return pieceLength.asInt();
     }
 
     public byte[] getData() {
